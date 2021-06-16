@@ -1,3 +1,3 @@
 abstract class MainRouterPresenterOutput {}
-class ShowTrack extends MainRouterPresenterOutput {final int id; ShowTrack(this.id);}
+class ShowTrack extends MainRouterPresenterOutput {}
 class PopTrack extends MainRouterPresenterOutput {}

@@ -7,18 +7,24 @@ import 'package:itunes_tracks/ui/common/starter_bloc.dart';
 import 'track_list_presentation_model.dart';
 import 'track_list_use_case_output.dart';
 
+abstract class TrackListUseCaseState {
+    int? get selectedId;
+    set selectedId(int? id);
+}
+
 class TrackListUseCase with StarterBloc<TrackListUseCaseOutput> {
   final Repository _repository;
   List<TrackListRowPresentationModel> _rows = [];
   String _searchTerm = "";
+  TrackListUseCaseState _state;
 
-  TrackListUseCase(this._repository) {
-    streamAdd(PresentInitialize());
-  }
+    TrackListUseCase(this._repository, this._state) {
+        streamAdd(PresentInitialize());
+    }
 
-  void eventSearch(String searchTerm) async {
-    _searchTerm = searchTerm;
-    _refreshPresentation(isWaiting: true);
+    void eventSearch(String searchTerm) async {
+      _searchTerm = searchTerm;
+      _refreshPresentation(isWaiting: true);
 
     final result = await _repository.trackManager.all(searchTerm);
 
@@ -45,4 +51,9 @@ class TrackListUseCase with StarterBloc<TrackListUseCaseOutput> {
         errorMessage: errorMessage,
         semanticReason: semanticReason)));
   }
+
+    void eventTrackTapped(int index) {
+        _state.selectedId = _rows[index].trackId;
+        streamAdd(PresentTrack());
+    }
 }

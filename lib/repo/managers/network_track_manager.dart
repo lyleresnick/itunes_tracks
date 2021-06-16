@@ -6,8 +6,6 @@ import 'package:itunes_tracks/repo/entities/track.dart';
 import 'package:itunes_tracks/repo/managers/track_manager.dart';
 import 'Result.dart';
 
-//typedef TrackListResult = Result<List<Track>, TrackSemanticEvent>;
-
 class NetworkTrackManager extends TrackManager {
   NetworkTrackManager();
 
@@ -16,7 +14,7 @@ class NetworkTrackManager extends TrackManager {
   static final _baseURLString = "http://itunes.apple.com";
 
   @override
-  Future<Result<List<Track>, TrackSemanticEvent>> all(String matching) async {
+  Future<TrackListResult> all(String matching) async {
     final queryTerm = "?term=$matching";
     final response = await Http.get(Uri.parse(_baseURLString + "/search" + queryTerm));
 
@@ -42,7 +40,7 @@ class NetworkTrackManager extends TrackManager {
   }
 
   @override
-  Future<Result<Track, TrackSemanticEvent>> fetch(int id) async {
+  Future<TrackResult> fetch(int id) async {
     try {
       final track =
           _currentTrackList.firstWhere((track) => track.trackId == id);

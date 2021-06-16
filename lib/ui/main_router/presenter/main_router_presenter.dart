@@ -15,8 +15,8 @@ class MainRouterPresenter
   // TrackListRouter
 
   @override
-  void routerRequestTrack(int id) {
-    streamAdd(ShowTrack(id));
+  void routerRequestTrack() {
+    streamAdd(ShowTrack());
   }
 
   @override

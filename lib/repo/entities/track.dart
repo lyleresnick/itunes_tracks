@@ -58,7 +58,7 @@ class Track {
       }
 
       return Track(
-        kind: json['kind'],
+        kind: kind,
         trackId: trackId,
         artistName: artistName,
         collectionName: json['collectionName'],

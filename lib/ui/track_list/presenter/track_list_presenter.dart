@@ -10,7 +10,6 @@ import 'track_list_view_model.dart';
 class TrackListPresenter with StarterBloc<TrackListPresenterOutput> {
   final TrackListUseCase _useCase;
   final TrackListRouter _router;
-  late TrackListPresentationModel _cachedPresenterModel;
 
   TrackListPresenter(this._useCase, this._router) {
     _useCase.stream.listen((event) {
@@ -20,8 +19,10 @@ class TrackListPresenter with StarterBloc<TrackListPresenterOutput> {
       else if (event is PresentError) {
           streamAdd(ShowError(event.code, event.description));
       } else if (event is PresentModel) {
-        _cachedPresenterModel = event.model;
-        streamAdd(ShowModel(TrackListViewModel.fromPresentation(_cachedPresenterModel)));
+        streamAdd(ShowModel(
+            TrackListViewModel.fromPresentation(event.model)));
+      } else if (event is PresentTrack) {
+        _router.routerRequestTrack();
       } else {
         assert(false, "unknown event $event");
         return null;
@@ -34,8 +35,7 @@ class TrackListPresenter with StarterBloc<TrackListPresenterOutput> {
   }
 
   void eventTrackTapped(int index) {
-    final id = _cachedPresenterModel.rows[index].trackId;
-    _router.routerRequestTrack(id);
+    _useCase.eventTrackTapped(index);
   }
 
   void dispose() {

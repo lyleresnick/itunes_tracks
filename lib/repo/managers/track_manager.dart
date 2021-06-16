@@ -5,8 +5,11 @@ enum  TrackSemanticEvent {
   notFound,
 }
 
+typedef TrackListResult = Result<List<Track>, TrackSemanticEvent>;
+typedef TrackResult = Result<Track, TrackSemanticEvent>;
+
 abstract class TrackManager {
-  Future<Result<List<Track>,TrackSemanticEvent>> all(String matching);
-  Future<Result<Track,TrackSemanticEvent>> fetch(int id);
+  Future<TrackListResult> all(String matching);
+  Future<TrackResult> fetch(int id);
 }
 

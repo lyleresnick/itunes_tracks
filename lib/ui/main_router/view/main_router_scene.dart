@@ -12,7 +12,7 @@ class MainRouterScene extends StatelessWidget {
   MainRouterScene(this._presenter) {
     _presenter.stream.listen((event) {
       if (event is ShowTrack) {
-        navKey.currentState!.pushNamed(routeNameTrack, arguments: event.id);
+        navKey.currentState!.pushNamed(routeNameTrack);
       } else if (event is PopTrack) {
         navKey.currentState!.pop();
       } else {
@@ -41,7 +41,7 @@ class MainRouterScene extends StatelessWidget {
                 break;
               case routeNameTrack:
                 builder = (BuildContext context) {
-                  return TrackAssembly(settings.arguments as int, _presenter).scene;
+                  return TrackAssembly(_presenter).scene;
                 };
                 break;
               default:
