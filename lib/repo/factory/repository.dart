@@ -1,6 +1,6 @@
 
 import 'package:itunes_tracks/repo/factory/network_repository.dart';
-import 'package:itunes_tracks/repo/managers/track_manager.dart';
+import 'package:itunes_tracks/repo/factory/track_manager.dart';
 // import 'test_repository.dart';
 
 enum _Implementation {

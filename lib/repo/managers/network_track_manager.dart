@@ -3,39 +3,34 @@ import 'dart:convert';
 import 'package:http/http.dart' as Http;
 
 import 'package:itunes_tracks/repo/entities/track.dart';
-import 'package:itunes_tracks/repo/managers/track_manager.dart';
+import 'package:itunes_tracks/repo/factory/api_client.dart';
+import 'package:itunes_tracks/repo/factory/track_manager.dart';
 import 'Result.dart';
 
 class NetworkTrackManager extends TrackManager {
-  NetworkTrackManager();
+  final ApiClient _apiClient;
+  NetworkTrackManager(this._apiClient);
 
   List<Track> _currentTrackList = [];
 
-  static final _baseURLString = "http://itunes.apple.com";
-
   @override
   Future<TrackListResult> all(String matching) async {
-    final queryTerm = "?term=$matching";
-    final response = await Http.get(Uri.parse(_baseURLString + "/search" + queryTerm));
-
-    if (response.statusCode == 200) {
-      final decodedResponse = jsonDecode(response.body);
+    try {
+      final decodedResponse = await _apiClient.search(matching);
       final resultCount = decodedResponse['resultCount'];
       if (resultCount == 0) {
         return SemanticErrorResult(reason: TrackSemanticEvent.notFound);
       }
       final results = decodedResponse['results'] as List<dynamic>;
       _currentTrackList = results
-          .map((result) => result as Map<String,dynamic>)
+          .map((result) => result as Map<String, dynamic>)
           .map((track) => Track.fromJson(track))
           .where((track) => track != null)
           .map((track) => track as Track)
           .toList();
       return SuccessResult(data: _currentTrackList);
-    } else {
-      return FailureResult(
-          code: response.statusCode,
-          description: response.reasonPhrase ?? 'Failed to load Tracks');
+    } on ApiClientException catch (e) {
+      return FailureResult(code: e.statusCode, description: e.description);
     }
   }
 

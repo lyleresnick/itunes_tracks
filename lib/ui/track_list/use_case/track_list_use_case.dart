@@ -1,7 +1,7 @@
 import 'package:itunes_tracks/repo/entities/track.dart';
 import 'package:itunes_tracks/repo/factory/repository.dart';
 import 'package:itunes_tracks/repo/managers/Result.dart';
-import 'package:itunes_tracks/repo/managers/track_manager.dart';
+import 'package:itunes_tracks/repo/factory/track_manager.dart';
 import 'package:itunes_tracks/ui/common/starter_bloc.dart';
 
 import 'track_list_presentation_model.dart';

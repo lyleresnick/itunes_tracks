@@ -1,5 +1,5 @@
 import 'package:itunes_tracks/repo/entities/util.dart';
-import 'package:itunes_tracks/repo/managers/track_manager.dart';
+import 'package:itunes_tracks/repo/factory/track_manager.dart';
 import 'package:itunes_tracks/ui/track_list/use_case/track_list_presentation_model.dart';
 
 class TrackListViewModel {

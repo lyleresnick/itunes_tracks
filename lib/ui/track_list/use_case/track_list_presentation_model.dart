@@ -1,5 +1,5 @@
 import 'package:itunes_tracks/repo/entities/track.dart';
-import 'package:itunes_tracks/repo/managers/track_manager.dart';
+import 'package:itunes_tracks/repo/factory/track_manager.dart';
 
 class TrackListPresentationModel {
   final String? errorMessage;
