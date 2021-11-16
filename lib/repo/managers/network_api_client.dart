@@ -8,11 +8,13 @@ class NetworkApiClient extends ApiClient {
   Future<Response> Function(Uri url, {Map<String, String>? headers}) _httpGet;
   NetworkApiClient(this._httpGet);
 
+  Uri searchUri(matching) {
+    return Uri.parse(_baseURLString + "/search?term=$matching");
+  }
 
   Future<Map<String, dynamic>> search(String matching) async {
-    final queryTerm = "?term=$matching";
     final response =
-        await _httpGet(Uri.parse(_baseURLString + "/search" + queryTerm));
+        await _httpGet(searchUri(matching));
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
