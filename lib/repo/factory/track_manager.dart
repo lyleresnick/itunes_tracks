@@ -1,15 +1,14 @@
 import 'package:itunes_tracks/repo/entities/track.dart';
-import 'package:itunes_tracks/repo/managers/Result.dart';
+import 'package:itunes_tracks/repo/managers/result.dart';
 
-enum  TrackSemanticEvent {
+enum  TrackDomainIssue {
   notFound,
 }
 
-typedef TrackListResult = Result<List<Track>, TrackSemanticEvent>;
-typedef TrackResult = Result<Track, TrackSemanticEvent>;
+typedef TrackListResult = Result<List<Track>, TrackDomainIssue>;
+typedef TrackResult = Result<Track, TrackDomainIssue>;
 
 abstract class TrackManager {
   Future<TrackListResult> all(String matching);
-  Future<TrackResult> fetch(int id);
 }
 

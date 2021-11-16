@@ -1,7 +1,9 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'track_presentation_model.dart';
+part 'track_use_case_output.freezed.dart';
 
-abstract class TrackUseCaseOutput {}
-class PresentNotFound extends TrackUseCaseOutput{}
-class PresentError extends TrackUseCaseOutput {final String description; PresentError(this.description);}
-class PresentModel extends TrackUseCaseOutput { final TrackPresentationModel model; PresentModel(this.model);}
-
+@freezed
+class TrackUseCaseOutput with _$TrackUseCaseOutput {
+  const factory TrackUseCaseOutput.model(TrackPresentationModel model) = _Model;
+  const factory TrackUseCaseOutput.error(String description) = _Error;
+}

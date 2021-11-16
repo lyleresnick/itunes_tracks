@@ -1,37 +1,26 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:itunes_tracks/repo/entities/util.dart';
+part 'track.freezed.dart';
 
-class Track {
-  final String kind;
-  final int trackId;
-  final String artistName;
-  final String? collectionName;
-  final String trackName;
-  final Uri artworkUrl100;
-  final double? collectionPrice;
-  final double trackPrice;
-  final DateTime? releaseDate;
-  final int trackTimeMillis;
-  final String currency;
-  final String? shortDescription;
-  final String? longDescription;
-
-  Track(
-      {required this.kind,
-      required this.trackId,
-      required this.artistName,
-      this.collectionName,
-      required this.trackName,
-      required this.artworkUrl100,
-      this.collectionPrice,
-      required this.trackPrice,
-      this.releaseDate,
-      required this.trackTimeMillis,
-      required this.currency,
-      this.shortDescription,
-      this.longDescription});
+@freezed
+class Track with _$Track {
+  const factory Track({
+    required String kind,
+    required int trackId,
+    required String artistName,
+    String? collectionName,
+    required String trackName,
+    required Uri artworkUrl100,
+    double? collectionPrice,
+    required double trackPrice,
+    DateTime? releaseDate,
+    required int trackTimeMillis,
+    required String currency,
+    String? shortDescription,
+    String? longDescription,
+  }) = _Track;
 
   static Track? fromJson(Map<String, dynamic> json) {
-
     try {
       final trackId = json['trackId'] as int?;
       if (trackId == null) throw FormatException();
@@ -49,7 +38,8 @@ class Track {
       if (trackTimeMillis == null) throw FormatException();
       final artworkUrl100String = json['artworkUrl100'] as String?;
       if (artworkUrl100String == null) throw FormatException();
-      Uri artworkUrl100 = Uri.parse(artworkUrl100String);
+      final artworkUrl100 = Uri.parse(artworkUrl100String);
+      if (!artworkUrl100.hasScheme) throw FormatException();
 
       DateTime? releaseDate;
       final releaseDateString = json['releaseDate'] as String?;
@@ -72,11 +62,8 @@ class Track {
         shortDescription: json['shortDescription'],
         longDescription: json['longDescription'],
       );
-
-    }
-    catch (e) {
+    } catch (e) {
       return null;
     }
-
   }
 }

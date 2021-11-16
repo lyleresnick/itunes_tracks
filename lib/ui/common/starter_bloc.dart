@@ -6,7 +6,7 @@ abstract class StarterBloc<Output> implements Bloc<Output> {
   final _controller = StreamController<Output>();
 
   Stream<Output> get stream => _controller.stream;
-  void streamAdd(Output value) => _controller.sink.add(value);
+  void emit(Output value) => _controller.sink.add(value);
 
   bool get isClosed {
     return _controller.isClosed;

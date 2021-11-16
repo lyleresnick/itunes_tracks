@@ -21,62 +21,56 @@ class TrackListScene extends StatelessWidget {
         title: Text("Track List"),
       ),
       body: SafeArea(
-        child: BlocBuilder<TrackListPresenter, TrackListPresenterOutput>(
-            bloc: _presenter,
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return FullScreenLoadingIndicator();
-              }
-              final data = snapshot.data;
-              if (data is ShowModel) {
-                final viewModel = data.model;
-
-                if (viewModel.errorMessage != null) {
-                  showAlert(
-                      context: context,
-                      titleText: "Message",
-                      bodyText: viewModel.errorMessage!,
-                      button1Title: "OK");
+          child: BlocBuilder<TrackListPresenter, TrackListPresenterOutput>(
+              bloc: _presenter,
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return FullScreenLoadingIndicator();
                 }
+                return snapshot.data!.when(
+                    model: (viewModel) {
+                      if (viewModel.errorMessage != null) {
+                        showAlert(
+                            context: context,
+                            titleText: "Message",
+                            bodyText: viewModel.errorMessage!,
+                            button1Title: "OK");
+                      }
 
-                return PossiblyWaiting(
-                  isWaiting: viewModel.isWaiting,
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _SearchSection(),
-                        Expanded(
-                            child: ListView.builder(
-                                itemCount: viewModel.rows.length,
-                                itemBuilder: (context, i) {
-                                  return _TrackListRow(
-                                      viewModel: viewModel.rows[i], index: i);
-                                })),
-                      ]),
-                );
-              } else if (data is ShowInitialize) {
-                return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _SearchSection(),
-                      Expanded(
-                          child:
-                              Center(child: Text("Enter and Artist or Song"))),
-                    ]);
-              } else if (data is ShowError) {
-                final errorText = "${data.code} ${data.description}";
-                return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _SearchSection(),
-                      Expanded(child: Center(child: Text(errorText))),
-                    ]);
-              } else {
-                assert(false, "unknown event $data");
-                return Container(color: Colors.red);
-              }
-            }),
-      ),
+                      return PossiblyWaiting(
+                        isWaiting: viewModel.isWaiting,
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _SearchSection(),
+                              Expanded(
+                                  child: ListView.builder(
+                                      itemCount: viewModel.rows.length,
+                                      itemBuilder: (context, i) {
+                                        return _TrackListRow(
+                                            viewModel: viewModel.rows[i],
+                                            index: i);
+                                      })),
+                            ]),
+                      );
+                    },
+                    initialize: () => Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _SearchSection(),
+                              Expanded(
+                                  child: Center(
+                                      child: Text("Enter and Artist or Song"))),
+                            ]),
+                    error: (code, description) => Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _SearchSection(),
+                              Expanded(
+                                  child: Center(
+                                      child: Text("$code $description"))),
+                            ]));
+              })),
     );
   }
 }

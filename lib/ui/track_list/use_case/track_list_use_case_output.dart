@@ -1,7 +1,13 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'track_list_presentation_model.dart';
+part 'track_list_use_case_output.freezed.dart';
 
-abstract class TrackListUseCaseOutput {}
-class PresentInitialize extends TrackListUseCaseOutput {}
-class PresentModel extends TrackListUseCaseOutput { final TrackListPresentationModel model; PresentModel(this.model);}
-class PresentTrack extends TrackListUseCaseOutput {}
-class PresentError extends TrackListUseCaseOutput {final int code; final String description; PresentError(this.code, this.description);}
+@freezed
+class TrackListUseCaseOutput with _$TrackListUseCaseOutput {
+  const factory TrackListUseCaseOutput.initialize() = _Initialize;
+  const factory TrackListUseCaseOutput.model(TrackListPresentationModel model) =
+  _Model;
+  const factory TrackListUseCaseOutput.track() = _Track;
+  const factory TrackListUseCaseOutput.error(int code, String description) =
+  _Error;
+}

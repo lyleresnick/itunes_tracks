@@ -1,5 +1,5 @@
 import 'package:itunes_tracks/repo/factory/repository.dart';
-import 'package:itunes_tracks/ui/main_router/use_case/main_router_use_case.dart';
+import 'package:itunes_tracks/ui/app_state/itunes_track_app_state.dart';
 import 'package:itunes_tracks/ui/track_list/presenter/track_list_presenter.dart';
 import 'package:itunes_tracks/ui/track_list/router/track_list_router.dart';
 import 'package:itunes_tracks/ui/track_list/use_case/track_list_use_case.dart';
@@ -13,7 +13,7 @@ class TrackListAssembly {
 
     factory TrackListAssembly(TrackListRouter router) {
 
-        final useCase = TrackListUseCase(Repository.repository, MainRouterUseCaseState.instance);
+        final useCase = TrackListUseCase(Repository.repository, ITunesTracksAppState.instance);
         final presenter = TrackListPresenter(useCase, router);
         final scene = TrackListScene(presenter);
 

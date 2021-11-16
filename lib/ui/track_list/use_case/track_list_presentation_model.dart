@@ -1,34 +1,35 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:itunes_tracks/repo/entities/track.dart';
 import 'package:itunes_tracks/repo/factory/track_manager.dart';
+part "track_list_presentation_model.freezed.dart";
 
-class TrackListPresentationModel {
-  final String? errorMessage;
-  final TrackSemanticEvent? semanticReason;
-  final bool isWaiting;
-  final List<TrackListRowPresentationModel> rows;
-  final String searchTerm;
-
-  TrackListPresentationModel(
-      {required this.rows,
-      required this.searchTerm,
-      this.errorMessage,
-      this.isWaiting = false,
-      this.semanticReason});
+@freezed
+class TrackListPresentationModel with _$TrackListPresentationModel {
+  factory TrackListPresentationModel(
+      {String? errorMessage,
+      TrackDomainIssue? semanticReason,
+      @Default(false) bool isWaiting,
+      required List<TrackListRowPresentationModel> rows,
+      required String searchTerm}) = _TrackListPresentationModel;
 }
 
-class TrackListRowPresentationModel {
-  final int trackId;
-  final String artistName;
-  final String trackName;
-  final Uri artworkUrl100;
-  final int trackTimeMillis;
-  final double trackPrice;
+@freezed
+class TrackListRowPresentationModel with _$TrackListRowPresentationModel {
+  factory TrackListRowPresentationModel(
+      {required int trackId,
+      required String artistName,
+      required String trackName,
+      required Uri artworkUrl100,
+      required int trackTimeMillis,
+      required double trackPrice}) = _TrackListRowPresentationModel;
 
-  TrackListRowPresentationModel.fromEntity(Track entity)
-      : trackId = entity.trackId,
-        artistName = entity.artistName,
-        trackName = entity.trackName,
-        artworkUrl100 = entity.artworkUrl100,
-        trackTimeMillis = entity.trackTimeMillis,
-        trackPrice = entity.trackPrice;
+  static TrackListRowPresentationModel fromEntity(Track entity) {
+    return TrackListRowPresentationModel(
+        trackId: entity.trackId,
+        artistName: entity.artistName,
+        artworkUrl100: entity.artworkUrl100,
+        trackTimeMillis: entity.trackTimeMillis,
+        trackPrice: entity.trackPrice,
+        trackName: entity.trackName);
+  }
 }

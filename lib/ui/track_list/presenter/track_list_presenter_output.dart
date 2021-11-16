@@ -1,7 +1,12 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'track_list_view_model.dart';
+part 'track_list_presenter_output.freezed.dart';
 
-abstract class TrackListPresenterOutput {}
-class ShowInitialize extends TrackListPresenterOutput {}
-class ShowModel extends TrackListPresenterOutput { final TrackListViewModel model; ShowModel(this.model);}
-class ShowError extends TrackListPresenterOutput {final int code; final String description; ShowError(this.code, this.description);}
-
+@freezed
+class TrackListPresenterOutput with _$TrackListPresenterOutput {
+  const factory TrackListPresenterOutput.initialize() = _Initialize;
+  const factory TrackListPresenterOutput.model(TrackListViewModel model) =
+  _Model;
+  const factory TrackListPresenterOutput.error(int code, String description) =
+  _Error;
+}

@@ -1,42 +1,24 @@
-import 'package:itunes_tracks/repo/entities/track.dart';
-import 'package:itunes_tracks/repo/factory/repository.dart';
-import 'package:itunes_tracks/repo/managers/Result.dart';
-import 'package:itunes_tracks/repo/factory/track_manager.dart';
+import 'package:itunes_tracks/ui/app_state/app_state.dart';
 import 'package:itunes_tracks/ui/common/starter_bloc.dart';
 
 import 'track_presentation_model.dart';
 import 'track_use_case_output.dart';
 
-abstract class TrackUseCaseState {
-    int? get selectedId;
-    set selectedId(int? id);
-}
-
 class TrackUseCase with StarterBloc<TrackUseCaseOutput> {
+  final AppState _appState;
 
-    final Repository _repository;
-    final TrackUseCaseState _state;
-
-    TrackUseCase(this._repository, this._state) {
-        _initialize();
+  TrackUseCase(this._appState) {
+    final selectedIndex = _appState.selectedIndex;
+    if (selectedIndex == null) {
+      emit(
+          TrackUseCaseOutput.error("Programmer Error: selectedIndex is null"));
+    } else if (selectedIndex >= _appState.currentTrackList.length) {
+      emit(TrackUseCaseOutput.error(
+          "Programmer Error: selectedIndex $selectedIndex is out of range"));
+    } else {
+      final track = _appState.currentTrackList[selectedIndex];
+      emit(
+          TrackUseCaseOutput.model(TrackPresentationModel.fromEntity(track)));
     }
-
-    void _initialize() async {
-        final selectedId = _state.selectedId;
-        if (selectedId != null) {
-            final result = await _repository.trackManager.fetch(selectedId);
-
-            if (result is SemanticErrorResult<Track,TrackSemanticEvent>)
-                streamAdd(PresentNotFound());
-            else if (result is FailureResult<Track,TrackSemanticEvent>) {
-                assert(false, "this should never happen");
-            }
-            else if (result is SuccessResult<Track,TrackSemanticEvent>) {
-                streamAdd(PresentModel(TrackPresentationModel.fromEntity(result.data)));
-            }
-        }
-        else {
-            streamAdd(PresentError("Programmer Error selectedId is null" ));
-        }
-    }
+  }
 }

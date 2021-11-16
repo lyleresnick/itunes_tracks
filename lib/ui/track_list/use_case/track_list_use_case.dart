@@ -1,59 +1,53 @@
-import 'package:itunes_tracks/repo/entities/track.dart';
 import 'package:itunes_tracks/repo/factory/repository.dart';
-import 'package:itunes_tracks/repo/managers/Result.dart';
 import 'package:itunes_tracks/repo/factory/track_manager.dart';
+import 'package:itunes_tracks/ui/app_state/app_state.dart';
 import 'package:itunes_tracks/ui/common/starter_bloc.dart';
 
 import 'track_list_presentation_model.dart';
 import 'track_list_use_case_output.dart';
 
-abstract class TrackListUseCaseState {
-    int? get selectedId;
-    set selectedId(int? id);
-}
-
 class TrackListUseCase with StarterBloc<TrackListUseCaseOutput> {
   final Repository _repository;
   List<TrackListRowPresentationModel> _rows = [];
   String _searchTerm = "";
-  TrackListUseCaseState _state;
+  AppState _appState;
 
-    TrackListUseCase(this._repository, this._state) {
-        streamAdd(PresentInitialize());
-    }
+  TrackListUseCase(this._repository, this._appState) {
+    emit(TrackListUseCaseOutput.initialize());
+  }
 
-    void eventSearch(String searchTerm) async {
-      _searchTerm = searchTerm;
-      _refreshPresentation(isWaiting: true);
+  Future<void> eventSearch(String searchTerm) async {
+    _searchTerm = searchTerm;
+    _refreshPresentation(isWaiting: true);
 
     final result = await _repository.trackManager.all(searchTerm);
-
-    if (result is SemanticErrorResult<List<Track>, TrackSemanticEvent>)
-      _refreshPresentation(semanticReason: result.reason);
-    else if (result is FailureResult<List<Track>, TrackSemanticEvent>) {
-      streamAdd(PresentError(result.code, result.description));
-    } else if (result is SuccessResult<List<Track>, TrackSemanticEvent>) {
-      _rows = result.data
+    result.when(success: (data) {
+      _rows = data
           .map((row) => TrackListRowPresentationModel.fromEntity(row))
           .toList();
+      _appState.currentTrackList = data;
       _refreshPresentation();
-    }
+    }, failure: (code, description) {
+      emit(TrackListUseCaseOutput.error(code, description));
+    }, domainIssue: (reason) {
+      _refreshPresentation(domainIssue: reason);
+    });
   }
 
   _refreshPresentation(
       {String? errorMessage,
       isWaiting = false,
-      TrackSemanticEvent? semanticReason}) {
-    streamAdd(PresentModel(TrackListPresentationModel(
+      TrackDomainIssue? domainIssue}) {
+    emit(TrackListUseCaseOutput.model(TrackListPresentationModel(
         rows: _rows,
         searchTerm: _searchTerm,
         isWaiting: isWaiting,
         errorMessage: errorMessage,
-        semanticReason: semanticReason)));
+        semanticReason: domainIssue)));
   }
 
-    void eventTrackTapped(int index) {
-        _state.selectedId = _rows[index].trackId;
-        streamAdd(PresentTrack());
-    }
+  void eventTrackTapped(int index) {
+    _appState.selectedIndex = index;
+    emit(TrackListUseCaseOutput.track());
+  }
 }
